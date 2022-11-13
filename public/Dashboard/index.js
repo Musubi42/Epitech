@@ -54,40 +54,53 @@ onAuthStateChanged(auth, (user) => {
 
 // Get user widgets
 
+var TimeOut = []
+
 function getUserWidgets() {
     onValue(ref(database, `${auth.currentUser.uid}/Widgets`), (snapshot) => {
         $("#DashboardWidgets").empty();
-        $("#StocksDashboard").empty();
-        $("#MapDashboard").empty();
+        TimeOut.forEach(element => clearInterval(element));
+        TimeOut = [];
         if (snapshot.exists()) {
             for (const [Type, Widgets] of Object.entries(snapshot.val())) {
                 if (Type == "Jokes") {
                     for (const [key, value] of Object.entries(Widgets)) {
                         addJokes(key, value.Content, value.Refresh, value.Category);
                         // Refresh Joke
-                        setTimeout(function() {
-                            // getJokes(value.Category, value.Refresh, key);
-                        }, 10000);
+                        const Time = setTimeout(function() {
+                            getJokes(value.Category, value.Refresh, key);
+                        }, value.Refresh*60*1000);
+                        TimeOut.push(Time);
+                        console.log(TimeOut);
                     }
                 } else if (Type == "News") {
                     for (const [key, value] of Object.entries(Widgets)) {
                         addNews(key, value.Title, value.Content, value.Author, value.Link, value.Refresh, value.Category, value.Country);
                         // Refresh News
-                        setTimeout(function() {
-                            // getNews(value.Category, value.Country, value.Refresh, key);
-                        }, 9000);
+                        const Time = setTimeout(function() {
+                            getNews(value.Category, value.Country, value.Refresh, key);
+                        }, value.Refresh*60*1000);
+                        TimeOut.push(Time);
+                        console.log(TimeOut);
                     }
                 } else if (Type == "Satellites") {
                     for (const [key, value] of Object.entries(Widgets)) {
                         addSatellite(key, value.Latitude, value.Longitude, value.Refresh, value.ID, value.Name, value.Altitude);
                         // Refresh Satellite
-                        setTimeout(function() {
-                            // getSatellite(value.Satellite, value.Refresh, key);
-                        }, 9000);
+                        const Time = setTimeout(function() {
+                            getSatellite(value.Satellite, value.Refresh, key);
+                        }, value.Refresh*60*1000);
+                        TimeOut.push(Time);
+                        console.log(TimeOut);
                     }
                 } else if (Type == "Stocks") {
                     for (const [key, value] of Object.entries(Widgets)) {
                         addStocks(key, value.Symbol, value.Refresh, value.NewPrice, value.LastPrice, value.NewVolume, value.LastVolume, value.NewHigh, value.LastHigh, value.NewLow, value.LastLow);
+                        // Refresh Stocks
+                        const Time = setTimeout(function() {
+                            getStocks(value.Symbol, value.Refresh, key);
+                        }, value.Refresh*1000);
+                        TimeOut.push(Time);
                     }
                 }
             }
@@ -115,7 +128,7 @@ $("#Map").click(function() {
 
 // API call
 
-function getJokes(category = "", refresh = 10, key = "") {
+function getJokes(category = "", refresh = 10, key = "", timeOut = null) {
     var URL = category == "" ? "http://localhost:9090/api/ChuckNorris" : `http://localhost:9090/api/ChuckNorris?category=${category}`;
     $.ajax({type: "GET", url: URL, data: "", dataType: "json", success: function(data) {
         const Updates = {};
@@ -125,7 +138,7 @@ function getJokes(category = "", refresh = 10, key = "") {
         Updates["Category"] = category;
         update(ref(database, `${auth.currentUser.uid}/Widgets/Jokes/${Key}`), Updates);
     }, error: function(data) {
-    
+        
     }});
 }
 
@@ -817,65 +830,10 @@ function addStocks(id, symbol, refresh, newPrice, lastPrice, newVolume, lastVolu
     DeltaFlexLow.appendChild(LowDelta);
 }
 
+$("#SignOutButton").click(function() {
+    signOut(auth).then(() => {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-
-
-
-
-
-
-
-
-//     var url = "http://localhost:9090/api/ChuckNorris";
-//     const result = await $.ajax({type:"GET", url:url, data:"", dataType: "json"});
-//     console.log(result.value);
-
-
-
-
-
-//     console.log("Local");
-// } else {
-//     const ChuckNorris = httpsCallable(functions, "ISS");
-//     ChuckNorris().then((result) => {
-//         console.log("result");
-//     }).catch((error) => {
-//         console.log(error);
-//     });
-// }
+    }).catch((error) => {
+    
+    });
+});
