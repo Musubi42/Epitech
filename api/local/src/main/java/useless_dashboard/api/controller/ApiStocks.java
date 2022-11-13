@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/Stocks")
 public class ApiStocks {
-    @CrossOrigin(origins = "http://127.0.0.1:5501")
+    @CrossOrigin(origins = "*")
     @GetMapping
     public ResponseEntity<?> getStocks(@RequestParam(required = false) String symbol) throws Exception {
         String url = symbol == null ? "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=IBM&outputsize=compact&apikey=EOSDO58H9WPBPZIO" : "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&outputsize=compact&apikey=EOSDO58H9WPBPZIO";

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/Satellites")
 public class ApiSatellites {
-    @CrossOrigin(origins = "http://127.0.0.1:5501")
+    @CrossOrigin(origins = "*")
     @GetMapping
     public @ResponseBody ResponseEntity<?> getPosition(@RequestParam(required = false) String satellite) throws Exception {
         // If no satellite is specified, return the position of the ISS

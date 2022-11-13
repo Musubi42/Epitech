@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/News")
 public class ApiNews {
-    @CrossOrigin(origins = "http://127.0.0.1:5501")
+    @CrossOrigin(origins = "*")
     @GetMapping
     public @ResponseBody ResponseEntity<?> getNews(@RequestParam(required = false) String category , @RequestParam(required = false) String country) throws Exception {
         String url = category == null ? "https://newsapi.org/v2/top-headlines?category=health&" : "https://newsapi.org/v2/top-headlines?category=" + category + "&";
