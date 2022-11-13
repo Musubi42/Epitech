@@ -58,7 +58,7 @@ onValue(ref(database), (snapshot) => {
     $("#TableBody").empty();
     if (snapshot.exists()) {
         for (const [key, value] of Object.entries(snapshot.val())) {
-            createRow(key, value.displayName, value.email, "01/09/1999", value.disabled, value.confirmation, value.admin);
+            createRow(key, value.displayName, value.email, "", value.disabled, value.confirmation, value.admin);
             const Seperator = document.createElement("tr");
             Seperator.className = "h-1";
             document.getElementById("TableBody").appendChild(Seperator);

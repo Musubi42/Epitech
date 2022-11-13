@@ -36,6 +36,8 @@ onAuthStateChanged(auth, (user) => {
                 } else {
                     window.location = "../Admin/";
                 }
+            } else {
+                window.location = "./Confirmation/";
             }
         }).catch((error) => {
             window.location = "./Confirmation/";
@@ -47,7 +49,11 @@ onAuthStateChanged(auth, (user) => {
 
 $("form").submit(function(event) {
     const Data = $("form").serializeArray();
-    createUserWithEmailAndPassword(auth, Data[1].value, Data[2].value);
+    createUserWithEmailAndPassword(auth, Data[1].value, Data[2].value).then((userCredential) => {
+        const Updates = {};
+        Updates["displayName"] = Data[0].value;
+        update(ref(database, userCredential.user.uid), Updates);
+    });
     return false;
 });
 
@@ -61,7 +67,6 @@ $("#Google").click(function() {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
         const user = result.user;
-        console.log(user);
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -96,12 +101,15 @@ function changeToSignIn() {
         $("form").unbind("submit");
         $("form").submit(function(event) {
             const Data = $("form").serializeArray();
-            signInWithEmailAndPassword(auth, Data[1].value, Data[2].value);
+            signInWithEmailAndPassword(auth, Data[1].value, Data[2].value).then((userCredential) => {
+                console.log(userCredential.user);
+            });
             return false;
         });
         $("#Change").find("span").html("Don't have any account ?");
         $("#Change").find("a").html("Register");
         $("#Change").find("a").unbind("click");
+        $("#CreateAccount").html("Connexion");
         changeToRegister();
     });
 }
@@ -113,12 +121,17 @@ function changeToRegister() {
         $("form").unbind("submit");
         $("form").submit(function(event) {
             const Data = $("form").serializeArray();
-            createUserWithEmailAndPassword(auth, Data[1].value, Data[2].value);
+            createUserWithEmailAndPassword(auth, Data[1].value, Data[2].value).then((userCredential) => {
+                const Updates = {};
+                Updates["displayName"] = Data[0].value;
+                update(ref(database, userCredential.user.uid), Updates);
+            });
             return false;
         });
         $("#Change").find("span").html("Already have an acoount ?");
         $("#Change").find("a").html("Sign In");
         $("#Change").find("a").unbind("click");
+        $("#CreateAccount").html("Create account");
         changeToSignIn();
     })
 }

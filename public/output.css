@@ -2002,3 +2002,19 @@ https://tailwindcss.com/docs/adding-custom-styles#using-css-and-layer */
     padding-right: 4rem;
   }
 }
+
+.rounded-tl-lg {
+  border-top-left-radius: 0.5rem;
+}
+
+.rounded-bl-lg {
+  border-bottom-left-radius: 0.5rem;
+}
+
+.rounded-tr-lg {
+  border-top-right-radius: 0.5rem;
+}
+
+.rounded-br-lg {
+  border-bottom-right-radius: 0.5rem;
+}

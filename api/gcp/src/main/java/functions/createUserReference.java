@@ -22,7 +22,11 @@ public class createUserReference implements RawBackgroundFunction {
   public void accept(String json, Context context) {
     JsonObject body = gson.fromJson(json, JsonObject.class);
     try {
-        createReference(body.get("uid").getAsString(), body.get("displayName").getAsString(), body.get("email").getAsString());
+        if (body.has("displayName")) {
+          createReference(body.get("uid").getAsString(), body.get("displayName").getAsString(), body.get("email").getAsString());
+        } else {
+          createReference(body.get("uid").getAsString(), "", body.get("email").getAsString());
+        }
         // sendEmail(body.get("uid").getAsString(), body.get("email").getAsString());
     } catch(InterruptedException e) {
         e.printStackTrace();
@@ -33,12 +37,14 @@ public class createUserReference implements RawBackgroundFunction {
 
   public void createReference(String uid, String displayName, String email) throws InterruptedException, ExecutionException {
     Map<String, Object> Data = new HashMap<>();
-    Data.put("displayName", displayName);
+    if (displayName != "") {
+      Data.put("displayName", displayName);
+    }
     Data.put("email", email);
     Data.put("disabled", false);
     Data.put("confirmation", false);
     Data.put("admin", false);
-    FirebaseDatabase.getInstance("https://dashboard-81b3f-default-rtdb.europe-west1.firebasedatabase.app").getReference(uid).setValueAsync(Data).get();
+    FirebaseDatabase.getInstance("https://dashboard-81b3f-default-rtdb.europe-west1.firebasedatabase.app").getReference(uid).updateChildrenAsync(Data).get();
   }
 
   public void sendEmail(String uid, String email) throws InterruptedException, ExecutionException {
