@@ -1,0 +1,119 @@
+version: '3'
+services:
+  poll:
+    container_name: poll
+    build: ./poll
+    links: 
+      - redis
+    depends_on:
+      - redis
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTNAME=redis
+    ports:
+      - 4201:80
+    networks:
+      - poll-tier
+
+
+  result: 
+    container_name: result
+    build: ./result
+    links: 
+      - db
+    depends_on:
+      - db
+    restart: unless-stopped
+    environment:
+      - DB_HOSTNAME=db
+    networks:
+      - result-tier
+    ports:
+      - 4202:3000
+
+
+  worker:
+    container_name: worker
+    build: ./worker
+    links:
+      - redis
+      - db
+    depends_on:
+      - redis
+      - db
+    restart: unless-stopped
+    environment:
+      - DB_HOSTNAME=db
+      - REDIS_HOSTNAME=redis
+      # - REDIS_HOSTS=local:redis:6379
+    networks:
+      - back-tier
+    ports:
+      - 4203:80
+
+
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    restart: unless-stopped
+    # expose:
+    #   - 6379
+    # command: --port 6380
+    ports: 
+      - 6379
+    environment:
+      - POLL_HOSTNAME=poll
+      - WORKER_HOSTNAME=worker
+    networks:
+      - poll-tier
+      - back-tier
+
+
+  db:
+    container_name: pg
+    image: postgres:9
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+   # command: '--init-file ./lol/schema.sql'
+    networks:
+      - result-tier
+      - back-tier
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      # - db-data:/usr/share/db
+    environment:
+      - WORKER_HOSTNAME=worker
+      - RESULT_HOSTNAME=result
+      - POSTGRES_DB=votes
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin/
+
+
+volumes:
+  db-data:
+    driver: local
+  pgadmin-data:
+    driver: local
+
+
+networks:
+  poll-tier:
+    driver: bridge
+  result-tier:
+    driver: bridge
+  back-tier:
+    driver: bridge
