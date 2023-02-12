@@ -9,7 +9,7 @@ services:
       - REDIS_HOSTNAME=${REDIS_HOSTNAME}
       - PORT=80
     ports:
-      - 4201:80
+      - 4210:80
     networks:
       - poll-tier
     restart: unless-stopped
@@ -23,7 +23,7 @@ services:
     depends_on:
       - db
     ports:
-      - 4202:80
+      - 4211:80
     networks:
       - result-tier
     restart: unless-stopped
