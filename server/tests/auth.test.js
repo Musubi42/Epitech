@@ -10,7 +10,8 @@ describe("GET /todos", () => {
     }
     beforeAll(async () => {
       // set up the todo
-      await request(baseURL).post("/register").send(newUser);
+      await request(baseURL).post("/register").send(newUser
+        );
      })
     afterAll(async () => {
       await request(baseURL).delete(`/todo/${newTodo.id}`)
