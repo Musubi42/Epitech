@@ -21,6 +21,7 @@ class AuthController extends Controller {
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
         ]);
+        $user->createAsStripeCustomer();
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
     }
