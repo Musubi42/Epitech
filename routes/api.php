@@ -36,7 +36,9 @@ Route::delete("/products/{id}", [ProductController::class, "destroy"])->middlewa
 
 // Cart
 
+Route::get("/carts", [CartController::class, "index"])->middleware(["auth:sanctum"]);
 Route::post("/carts/{id}", [CartController::class, "store"])->middleware(["auth:sanctum"]);
+Route::delete("/carts/{id}", [CartController::class, "update"])->middleware(["auth:sanctum"]);
 
 Route::get("/success", function() {
     return Redirect::to("https://example.com/success");
