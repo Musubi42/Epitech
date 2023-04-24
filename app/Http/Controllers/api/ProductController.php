@@ -31,7 +31,7 @@ class ProductController extends Controller {
             "price" => "required|numeric"
         ]);
         $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
-        $product = $stripe->products->create([
+        $stripe->products->create([
             "name" => $validatedData["name"],
             "description" => $validatedData["description"],
             "images" => (!$request->photo) ? [] : [$validatedData["photo"]],
