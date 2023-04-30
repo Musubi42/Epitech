@@ -25,7 +25,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post("/register", [AuthController::class, "register"]);
 Route::post("/login", [AuthController::class, "login"]);
-Route::get("/me", [AuthController::class, "me"])->middleware("auth:sanctum");
+Route::get("/users", [AuthController::class, "me"])->middleware("auth:sanctum");
+Route::post("/users", [AuthController::class, "update"])->middleware("auth:sanctum");
 
 // Products
 
@@ -42,8 +43,8 @@ Route::get("/carts/{id}", [CartController::class, "validation"])->middleware(["a
 Route::post("/carts/{id}", [CartController::class, "store"])->middleware(["auth:sanctum"]);
 Route::delete("/carts/{id}", [CartController::class, "update"])->middleware(["auth:sanctum"]);
 
-Route::get("/success", function() {
-    return Redirect::to("https://example.com/success");
+Route::get("/success", function () {
+    return Redirect::to("/success.html");
 })->name("success");
 
 // Orders
