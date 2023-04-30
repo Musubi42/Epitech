@@ -69,6 +69,9 @@ class ProductController extends Controller
     {
         $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
         $product = $stripe->products->retrieve($id);
+        if (!$product->active) {
+            return response()->json(["error" => "There is no product for this product_id."])->setStatusCode(404);
+        }
         $price = $stripe->prices->retrieve($product->default_price);
         $object = (object) ["id" => $product->id, "name" => $product->name, "description" => $product->description, "photo" => (!$product->images) ? "" : $product->images[0], "price" => $price->unit_amount / 100];
         return response()->json($product->active ? $object : null)->setStatusCode(200);

@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Js;
 use Throwable;
 
-class CartController extends Controller {
+class CartController extends Controller
+{
 
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         try {
             $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
             $items = [];
@@ -39,7 +41,8 @@ class CartController extends Controller {
         }
     }
 
-    public function store(Request $request, string $id) {
+    public function store(Request $request, string $id)
+    {
         try {
             $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
             $products = [];
@@ -87,11 +90,12 @@ class CartController extends Controller {
             $object = (object) ["id" => $checkout->id, "totalPrice" => $checkout->amount_total, "creationDate" => date("Y-m-d H:m:s", $checkout->created), "products" => $products, "url" => $checkout->url];
             return response()->json($object);
         } catch (Throwable $e) {
-            return response()->json(["error" => "Internal server error."])->setStatusCode(500);
+            return response()->json(["error" => "There is no product with this product_id."])->setStatusCode(500);
         }
     }
 
-    public function update(Request $request, string $id) {
+    public function update(Request $request, string $id)
+    {
         try {
             $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
             $products = [];
@@ -147,7 +151,8 @@ class CartController extends Controller {
         }
     }
 
-    public function validation(Request $request, string $id) {
+    public function validation(Request $request, string $id)
+    {
         try {
             $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
             if (empty($request->user()->session_id)) {
